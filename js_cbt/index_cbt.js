@@ -1,91 +1,6 @@
-//globals//
-const config ={
-    parent: "game",
-    width: 600,
-    height: 400,
-    backgroundColor: '#3498db',
-    physics:{
-        default: 'arcade',
-    },
-    scene:{
-        preload,
-        create,
-        update
-    },
-    // plugin:{
-
-    // }
-            
-}
-var game = new Phaser.Game(config);
-let player,coin;
-let SCREEN;
-let ScreenText,ScreenText2;
-let pointer;
-let tapPos;
-let joystick;
+import Playerf from "./playerf.js";
 
 //globals//
-
-
-//Scene
-
-function preload(){ 
-    this.load.image('player','../assets/images/player.png');
-    this.load.image('coin','../assets/images/coin.png');
-     var url;
-     url = 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexvirtualjoystickplugin.min.js';
-    this.load.plugin('rexvirtualjoystickplugin', url, true);
-
-
-
-}
-function create(){
-    
-    SCREEN = this.physics.world.bounds;
-    player = this.physics.add.sprite(100,100,'player');
-    player.setCollideWorldBounds(true);
-    coin = this.physics.add.sprite(300,300,'coin');
-    ScreenText = this.add.text(20,20,'hi',{fontSize: 50});
-    // ScreenText2 = this.add.text(20,config.height*0.80,'hi',{fontSize: 30});
-
-    // // Add the Virtualjoystick plugin to the game
-    joystick = this.plugins.get('rexvirtualjoystickplugin').add(this, {
-        x: config.width*0.80,
-        y: config.height*0.80,
-        radius: 50,
-        base: this.add.circle(0, 0, 50, 0x888888),
-        thumb: this.add.circle(0, 0, 25, 0xcccccc),
-        dir: '8dir',   // 'up&down'|0|'left&right'|1|'4dir'|2|'8dir'|3
-        forceMin: 16,
-        enable: true
-    });    
-   
-
- }
-function update(){
-    ScreenText.setText(`X: ${joystick.pointerX} Y: ${joystick.pointerY}`);
-    // ScreenText2.setText(`force: ${joystick.force}`);
-
-    var pos = finalPos(player.x,player.y,joystick.forceX,joystick.forceY);
-    player.setPosition(pos.x,pos.y);
-
-    //overlap
-
-    // if(this.physics.add.overlap(this.player,this.coin,()=>{},null,this)){
-        // console.log('ol');
-    // }
-
-    // console.log(checkOverlap(this.coin,this.player));
-
-
-
-}
-
-function checkOverlap(spriteA,spriteB){
-    // return Phaser.physics.add.overlap(spriteA,spriteB);/
-
-}
 
 function finalPos(initX,initY,forceX,forceY){
     let finalPos={x:0,y:0};
@@ -96,7 +11,98 @@ function finalPos(initX,initY,forceX,forceY){
 }
 
 
+//globals//
 
 
+//Scene
+class MainScene extends Phaser.Scene{
+    
+
+
+
+ preload(){ 
+    this.load.image('player','../assets/images/player.png');
+    this.load.image('playerf','../assets/images/player.png');
+    this.load.image('coin','../assets/images/coin.png');
+     var url;
+     url = 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexvirtualjoystickplugin.min.js';
+    this.load.plugin('rexvirtualjoystickplugin', url, true);
+
+    this.load.plugin('rexmovetoplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexmovetoplugin.min.js', true);
+
+}
+ create(){
+    this.score = 0;
+    this.speed = 10;
+    this.SCREEN = this.physics.world.bounds;
+    this.player = this.physics.add.sprite(100,100,'player');
+
+   
+
+    this.player.setCollideWorldBounds(true);
+
+   this.coin = this.physics.add.sprite(config.width/2,config.height/2,'coin');
+    this.ScreenText = this.add.text(20,20,'hi',{fontSize: 50});
+
+    // // Add the Virtualjoystick plugin to the game
+    this.joystick = this.plugins.get('rexvirtualjoystickplugin').add(this, {
+        x: config.width*0.80,
+        y: config.height*0.80,
+        radius: 50,
+        base: this.add.circle(0, 0, 50, 0x888888),
+        thumb: this.add.circle(0, 0, 25, 0xcccccc),
+        dir: '8dir',   // 'up&down'|0|'left&right'|1|'4dir'|2|'8dir'|3
+        forceMin: 16,
+        enable: true
+    });    
+
+    this.ball = this.add.circle(400,100,20,0xffffff);
+    this.ball.moveTo = this.plugins.get('rexmovetoplugin').add(this.ball,{
+        speed: this.speed,
+        rotateToTarget: true
+    }).on('complete',()=>{ 
+        // // Display word "Game Over" at center of the screen game
+        //     let gameOverText = this.add.text(config.width / 2, config.height / 2, 'GAME OVER', { fontSize: '32px', fill: '#fff' });
+
+        //     // Set z-index just in case your text show behind the background.
+        //     gameOverText.setDepth(1);
+    });
+
+
+ }
+ update(){
+  
+    var pos = finalPos(this.player.x,this.player.y,this.joystick.forceX,this.joystick.forceY);
+    this.player.setPosition(pos.x,pos.y);
+    this.ball.moveTo.setSpeed(this.speed*(this.score));
+    this.ball.moveTo.moveTo(this.player.x,this.player.y);
+   
+    if(this.physics.overlap(this.player,this.coin)){
+        console.log('hit');
+        this.score ++;
+        this.coin.x = Phaser.Math.Between(10, config.width*0.7);
+        this.coin.y = Phaser.Math.Between(10, config.height*0.7);
+        
+    }
+
+    this.ScreenText.setText(`SCORE: ${this.score}`);
+
+}
+
+
+
+};
 //GAME 
-
+const config ={
+    parent: "game",
+    width: 600,
+    height: 400,
+    backgroundColor: '#3498db',
+    physics:{
+        default: 'arcade',
+    },
+    scene: MainScene
+    
+            
+}
+var game = new Phaser.Game(config);
