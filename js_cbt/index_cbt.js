@@ -1,4 +1,3 @@
-import Playerf from "./playerf.js";
 
 //globals//
 
