@@ -11,6 +11,22 @@ function finalPos(initX,initY,forceX,forceY){
 
 
 //globals//
+//https://www.youtube.com/watch?v=tST1IxVnWLY&list=PLlultXOnQ04Qj5vm4Cf8l2zlFg7_4A7i8
+
+
+//
+
+
+
+//Boot Scene
+
+//preload Scene
+
+
+//menu Scene
+
+
+
 
 
 //Scene
@@ -31,9 +47,13 @@ class MainScene extends Phaser.Scene{
 
 }
  create(){
+    
+    this.scale.lockOrientation('landscape');
+    this.Sc
     this.score = 0;
     this.speed = 10;
-    this.SCREEN = this.physics.world.bounds;
+    // this.SCREEN = this.physics.world.bounds;
+    // this.scale.lockOrientation('landscape');
     this.player = this.physics.add.sprite(100,100,'player');
 
    
@@ -94,13 +114,16 @@ class MainScene extends Phaser.Scene{
 //GAME 
 const config ={
     parent: "game",
-    width: 600,
-    height: 400,
+    width: window.innerWidth * window.devicePixelRatio,
+    height: window.innerHeight * window.devicePixelRatio,
     backgroundColor: '#3498db',
     physics:{
         default: 'arcade',
     },
-    scene: MainScene
+    scene: MainScene,
+    scale: {
+        mode: Phaser.Scale.FIT,
+    }
     
             
 }
