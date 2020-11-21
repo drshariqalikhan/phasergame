@@ -22,10 +22,10 @@ App.prototype.start = function()
     const config ={
         type: Phaser.AUTO,
         parent: "phaser-app",
-        // width : 360/2,
-        // height : 640/2,
-        width : 340/2,
-        height : 360/2,
+        width : 360,
+        height : 640,
+        // width : 640/2,
+        // height : 360/2,
         backgroundColor: '#3498db',
         physics:{
             default: 'arcade',
@@ -43,7 +43,9 @@ App.prototype.start = function()
 
 let game = new Phaser.Game(config);
 
-//globals
+
+
+////////////globals and custom objects
 game.IS_DEV = this.IS_DEV;
 game.VERSION = this.VERSION;
 
@@ -53,12 +55,16 @@ game.CONFIG ={
     height: config.height,
     centerX : Math.round(0.5*config.width),
     centerY : Math.round(0.5*config.height),
-    tile: 16
+    tile: 32
 };
 
 //sounds
 
 };
+
+
+
+////////////globals and custom objects
 
 
 
@@ -84,8 +90,10 @@ class Boot extends Phaser.Scene
     }
 
     create(){
-
         this.scene.start('Preload');
+       
+
+        
     }
 }
 
@@ -136,7 +144,7 @@ class Menu extends Phaser.Scene
 
     create(){
 
-        this.text = this.add.text(this.CONFIG.centerX,this.CONFIG.centerY,'the menu');
+        this.text = this.add.text(this.CONFIG.centerX,this.CONFIG.centerY,'menu');
         this.text.setOrigin(0.5);
     }
 }
@@ -148,8 +156,8 @@ function resizeApp()
     'use strict';
 
     //w-h ratio
-    // let game_ratio = (360/2)/(640/2);
-    let game_ratio = (640/2)/(360/2);
+    let game_ratio = (360)/(640);
+    // let game_ratio = (640/2)/(360/2);
 
     //div full height of browser 
     let div = document.getElementById('phaser-app');
@@ -207,9 +215,36 @@ function runApp()
 
 window.onload = function()
 {   
+    if(confirm('fullscreen')){
+        
+        var elem = document.getElementById("canvas");
+
+        /* When the openFullscreen() function is executed, open the video in fullscreen.
+        Note that we must include prefixes for different browsers, as they don't support the requestFullscreen method yet */
+        function openFullscreen() {
+          if (elem.requestFullscreen) {
+            elem.requestFullscreen();
+          } else if (elem.webkitRequestFullscreen) { /* Safari */
+            elem.webkitRequestFullscreen();
+          } else if (elem.msRequestFullscreen) { /* IE11 */
+            elem.msRequestFullscreen();
+          }
+        }
     //launch 
     runApp();
+            
+
+
+    }else{
+
+        
+
+    }
+   
 
 };
 
 ////////////main.js/////////////
+
+
+
